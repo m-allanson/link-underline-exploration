@@ -13,6 +13,10 @@
         --color-bright-crimson: #960462;
       }
 
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         margin: 3rem auto;
         max-width: 200px;
@@ -20,7 +24,6 @@
 
       section {
         margin-top: 1rem;
-        /* background-color: green; */
       }
 
       .link-anchor {
@@ -34,13 +37,11 @@
 
       .link-anchor::before {
         content: "";
-        transform-origin: 50% 100%;
         background: var(--color-sea-blue);
-        transition: clip-path 0.3s ease 0s,
-          transform 0.3s cubic-bezier(0.2, 1, 0.8, 1) 0s;
+        transition: clip-path 0.3s ease 0s;
         position: absolute;
         width: 100%;
-        height: 1px;
+        height: 2px;
         top: 95%;
         left: 0px;
         pointer-events: none;
@@ -59,7 +60,6 @@
       }
 
       .link-anchor:hover::before {
-        transform: translate3d(0px, 2px, 0px) scale3d(1, 2, 1);
         clip-path: polygon(
           0% 0%,
           0% 100%,
@@ -81,44 +81,114 @@
 
       .link-anchor .link-text {
         display: inline-block;
-        transition: all 0.5s cubic-bezier(0.2, 1, 0.8, 1) 0s;
-        color: var(--color-bright-crimson);
       }
 
       .polygon-shape-a {
-        width: 200px; /* Set the width of the shape */
-        height: 200px; /* Set the height of the shape */
-        background-color: #3498db; /* Set the background color of the shape */
-        clip-path: polygon(
-          0% 0%,
-          0% 100%,
-          0px 100%,
-          0px 0px,
-          100% 0px,
-          100% 100%,
-          0px 100%,
-          0px 100%,
-          100% 100%,
-          100% 0%
-        );
+        width: 200px;
+        height: 50px;
+
+        & span {
+          transition: clip-path 0.5s ease 0s;
+          pointer-events: none;
+          display: block;
+          width: 100%;
+          height: 2px;
+          background-color: green;
+          clip-path: polygon(
+            0% 0%,
+            0% 100%,
+            0px 100%,
+            0px 0px,
+            100% 0px,
+            100% 100%,
+            0px 100%,
+            0px 100%,
+            100% 100%,
+            100% 0%
+          );
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        &:hover span {
+          clip-path: polygon(
+            0% 0%,
+            0% 100%,
+            100% 100%,
+            50% 0px,
+            50% 0px,
+            50% 100%,
+            50% 100%,
+            0px 100%,
+            100% 100%,
+            100% 0%
+          );
+        }
       }
 
-      .polygon-shape-b {
-        width: 200px; /* Set the width of the shape */
-        height: 200px; /* Set the height of the shape */
-        background-color: #3498db; /* Set the background color of the shape */
-        clip-path: polygon(
-          0% 0%,
-          0% 100%,
-          100% 100%,
-          50% 0px,
-          50% 0px,
-          50% 100%,
-          50% 100%,
-          0px 100%,
-          100% 100%,
-          100% 0%
-        );
+      :root {
+        --underline-color: hotpink;
+        --underline-timing: 0.5s;
+        --underline-height: 2px;
+        --text-color: black;
+        --text-transition-timing: 0.3s;
+        --text-transition-height: 3px;
+      }
+
+      .hover-link {
+        display: inline-block;
+        position: relative;
+
+        /* The span contains text that will shift upwards slightly on hover */
+        & span {
+          color: var(--text-color);
+          display: inline-block;
+          transition: transform var(--text-transition-timing) ease 0s;
+        }
+
+        /* 
+          Before and after contain the left and right sides of the "curtain" that
+          will slide in from the sides on hover
+        */
+        &::before,
+        &::after {
+          content: "";
+          position: absolute;
+          pointer-events: none;
+          height: var(--underline-height);
+          bottom: calc(-1 * var(--underline-height));
+          left: 0;
+          right: 0;
+          background-color: var(--underline-color);
+          transition: clip-path var(--underline-timing) ease 0s;
+        }
+
+        &::before {
+          clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+        }
+
+        &::after {
+          clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%);
+          z-index: -1;
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        &:hover span {
+          transform: translateY(calc(-1 * var(--text-transition-height)));
+        }
+
+        &:hover::before {
+          clip-path: polygon(50% 0%, 0% 0%, 0% 100%, 100% 100%);
+        }
+
+        &:hover::after {
+          clip-path: polygon(50% 0, 100% 0, 100% 100%, 20% 100%);
+        }
       }
     </style>
     <title>Link hovers</title>
@@ -130,10 +200,11 @@
       </a>
     </section>
     <section>
-      <div class="polygon-shape-a"></div>
+      <a class="polygon-shape-a">Hover me too<span></span></a>
     </section>
+
     <section>
-      <div class="polygon-shape-b"></div>
+      <a class="hover-link"><span>And hover me also</span></a>
     </section>
   </body>
 </html>

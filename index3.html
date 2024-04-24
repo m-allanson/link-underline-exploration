@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <style>
+      :root {
+        --underline-color: hotpink;
+        --underline-timing: 0.3s;
+        --underline-height: 1px;
+        --text-transition-color: hotpink;
+        --text-transition-timing: 0.3s;
+        --text-transition-distance: -1px;
+      }
+
+      .hover-link {
+        display: inline-block;
+        position: relative;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        /* The span contains text that will shift upwards slightly on hover */
+        & span {
+          color: inherit;
+          display: inline-block;
+          transition: transform var(--text-transition-timing) ease,
+            color var(--text-transition-timing) ease;
+          transform: translate3d(0, 0, 0);
+        }
+
+        &:hover span {
+          transform: translate3d(0, var(--text-transition-distance), 0);
+          color: var(--text-transition-color);
+        }
+
+        /* Before and after contain the left and right sides of the "curtain" that will slide in from the sides on hover
+        */
+        &::before,
+        &::after {
+          content: "";
+          position: absolute;
+          pointer-events: none;
+          height: var(--underline-height);
+          bottom: calc(-1 * var(--underline-height));
+          left: 0;
+          right: 0;
+          background-color: var(--underline-color);
+          transition: clip-path var(--underline-timing),
+            transform var(--underline-timing) ease;
+          transform-origin: 50% 100%;
+        }
+
+        &::before {
+          clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+        }
+
+        &::after {
+          clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%);
+        }
+
+        &:hover::before,
+        &:hover::after {
+          transform: translateY(2px) scale3d(1, 2, 1);
+        }
+
+        &:hover::before {
+          clip-path: polygon(50% 0%, 0% 0%, 0% 100%, 100% 100%);
+        }
+
+        &:hover::after {
+          clip-path: polygon(50% 0, 100% 0, 100% 100%, 20% 100%);
+        }
+      }
+
+      /**
+      General page setup styles
+      ====================================================
+      */
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+          "Segoe UI Symbol";
+        font-size: 18px;
+        line-height: 1.45;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      main {
+        background-image: linear-gradient(
+          to bottom left,
+          #e0f2fe 0%,
+          #94a3b8 100%
+        );
+        display: grid;
+        height: 100svh;
+        place-items: center;
+      }
+
+      article {
+        background-color: oklch(0.1 0.2 240 / 0.95);
+        border-radius: 1rem;
+        box-shadow: 0.3em 0.3em 1em oklch(0.1 0.2 240 / 0.15);
+        color: #f1f5f9;
+        padding: 1rem;
+        width: min(500px, 90vw);
+
+        & h1 {
+          line-height: 1.1;
+          margin: 0;
+        }
+
+        & p {
+          margin: 0.75rem 0 0;
+        }
+
+        & a {
+          color: inherit;
+        }
+
+        & a:focus {
+          outline-offset: 4px;
+        }
+
+        & ul {
+          list-style-type: none;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.25rem 1rem;
+        }
+      }
+    </style>
+    <title>Link hovers</title>
+  </head>
+  <body>
+    <main>
+      <article>
+        <ul>
+          <li>
+            <a class="hover-link" href="#"><span>Example Link</span></a>
+          </li>
+          <li>
+            <a class="hover-link" href="#"><span>A second link</span></a>
+          </li>
+          <li>
+            <a class="hover-link" href="#"><span>This lovely link</span></a>
+          </li>
+          <li>
+            <a class="hover-link" href="#">
+              <span>Yet another link with a bit of text</span>
+            </a>
+          </li>
+        </ul>
+      </article>
+    </main>
+  </body>
+</html>

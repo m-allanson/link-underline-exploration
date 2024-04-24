@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link rel="stylesheet" href="index4.css" />
+    <link rel="modulepreload" href="index4.js" />
+    <style>
+      :root {
+      }
+
+      .canvas {
+        width: 100%;
+        aspect-ratio: 2 / 1;
+        position: relative;
+        border: 1px solid hotpink;
+        container-type: size;
+      }
+
+      .polygon {
+        --clip-path-min: 0% 0%, 0% 100%, 0 100%, 0 0, 100% 0, 100% 100%, 0 100%,
+          0 100%, 100% 100%, 100% 0%;
+        --clip-path-max: 0% 0%, 0% 100%, 100% 100%, 50% 0, 50% 0, 50% 100%,
+          50% 100%, 0 100%, 100% 100%, 100% 0%;
+        --clip-path: var(--clip-path-min);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        clip-path: polygon(--clip-path)
+        background-color: hotpink;
+      }
+
+      .point {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background-color: red;
+        border-radius: 50%;
+        top: -5px;
+        left: -5px;
+        --translate-x-min: 0;
+        --translate-x-max: 100;
+        --translate-x: var(--translate-x-min);
+
+        --translate-y-min: 0;
+        --translate-y-max: 100;
+        --translate-y: var(--translate-y-min);
+
+        transform: translateX(calc(var(--translate-x) * 1cqw))
+          translateY(calc(var(--translate-y) * 1cqh));
+        transition: transform 0.2s;
+      }
+
+      #point-1 {
+        background-color: #fda4af;
+        --translate-x-min: 0;
+        --translate-y-min: 0;
+
+        --translate-x-max: 0;
+        --translate-y-max: 0;
+      }
+
+      #point-2 {
+        background-color: #f0abfc;
+        --translate-x-min: 0;
+        --translate-y-min: 100;
+
+        --translate-x-max: 0;
+        --translate-y-max: 100;
+      }
+
+      #point-3 {
+        background-color: #c4b5fd;
+        --translate-x-min: 0;
+        --translate-y-min: 100;
+
+        --translate-x-max: 100;
+        --translate-y-max: 100;
+      }
+
+      #point-4 {
+        background-color: #93c5fd;
+        --translate-x-min: 0;
+        --translate-y-min: 0;
+
+        --translate-x-max: 50;
+        --translate-y-max: 0;
+      }
+
+      #point-5 {
+        background-color: #67e8f9;
+        --translate-x-min: 100;
+        --translate-y-min: 0;
+
+        --translate-x-max: 50;
+        --translate-y-max: 0;
+      }
+
+      #point-6 {
+        background-color: #6ee7b7;
+        --translate-x-min: 100;
+        --translate-y-min: 100;
+
+        --translate-x-max: 50;
+        --translate-y-max: 100;
+      }
+
+      #point-7 {
+        background-color: #bef264;
+        --translate-x-min: 0;
+        --translate-y-min: 100;
+
+        --translate-x-max: 50;
+        --translate-y-max: 100;
+      }
+
+      #point-8 {
+        background-color: #fcd34d;
+        --translate-x-min: 0;
+        --translate-y-min: 100;
+
+        --translate-x-max: 0;
+        --translate-y-max: 100;
+      }
+
+      #point-9 {
+        background-color: #fca5a5;
+        --translate-x-min: 100;
+        --translate-y-min: 100;
+
+        --translate-x-max: 100;
+        --translate-y-max: 100;
+      }
+
+      #point-10 {
+        background-color: #d4d4d4;
+        --translate-x-min: 100;
+        --translate-y-min: 0;
+
+        --translate-x-max: 100;
+        --translate-y-max: 0;
+      }
+    </style>
+
+    <title>Polygon demo</title>
+  </head>
+  <body>
+    <main>
+      <article>
+        <div class="canvas">
+          <span class="polygon"></span>
+          <span class="point" id="point-1"></span>
+          <span class="point" id="point-2"></span>
+          <span class="point" id="point-3"></span>
+          <span class="point" id="point-4"></span>
+          <span class="point" id="point-5"></span>
+          <span class="point" id="point-6"></span>
+          <span class="point" id="point-7"></span>
+          <span class="point" id="point-8"></span>
+          <span class="point" id="point-9"></span>
+          <span class="point" id="point-10"></span>
+        </div>
+        <div>
+          <div>
+            <label for="transform" class=""> Percentage: </label>
+            <span class="label-value">0</span>
+          </div>
+          <div>
+            <input
+              id="transform"
+              max="100"
+              min="0"
+              step="1"
+              type="range"
+              value="0"
+              style=""
+            />
+          </div>
+        </div>
+      </article>
+    </main>
+    <script type="module" src="index4.js"></script>
+    <script type="module">
+      import { PointsManager } from "./index4.js";
+
+      const points = [...document.querySelectorAll(".point")].map((point) => {
+        let style = window.getComputedStyle(point);
+        return {
+          id: point.id,
+          minX: Number(style.getPropertyValue("--translate-x-min")),
+          maxX: Number(style.getPropertyValue("--translate-x-max")),
+          minY: Number(style.getPropertyValue("--translate-y-min")),
+          maxY: Number(style.getPropertyValue("--translate-y-max")),
+        };
+      });
+
+      const pointsManager = new PointsManager(points);
+
+      const polygonEl = document.querySelector(".polygon");
+      const polygonStyle = window.getComputedStyle(polygonEl);
+      const polygonMinPoints = polygonStyle
+        .getPropertyValue("--clip-path-min")
+        .split(",");
+      const polygonMaxPoints = polygonStyle
+        .getPropertyValue("--clip-path-max")
+        .split(",");
+      const polygonPoints = polygonMinPoints.map((point, index) => {
+        const [xMin, yMin] = point.trim().split(" ");
+        const [xMax, yMax] = polygonMaxPoints[index].trim().split(" ");
+        return {
+          id: index,
+          xMin: Number(xMin.replace("%", "")),
+          yMin: Number(yMin.replace("%", "")),
+          xMax: Number(xMax.replace("%", "")),
+          yMax: Number(yMax.replace("%", "")),
+        };
+      });
+
+      const input = document.querySelector("input");
+      const labelValue = document.querySelector(".label-value");
+
+      window.addEventListener("input", (event) => {
+        pointsManager.updatePositions(Number(event.target.value));
+        labelValue.textContent = event.target.value;
+      });
+    </script>
+  </body>
+</html>

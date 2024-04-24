@@ -1,30 +1,27 @@
-//given percentage, start and end values, return the value that is percentage% between start and end
-// 0% is start, 100% is end
-// 50% is the value halfway between start and end
 export function getPercent(percentage, start, end) {
   return start + (end - start) * (percentage / 100);
 }
 
 export class Point {
   #id = "";
-  #minX = 0;
-  #minY = 0;
+  #xMin = 0;
+  #yMin = 0;
 
-  #maxX = 100;
-  #maxY = 100;
+  #xMax = 100;
+  #yMax = 100;
 
   // As a percentage between min and max position
   #x = null;
   #y = null;
 
-  constructor({ id, minX, maxX, minY, maxY }) {
+  constructor({ id, xMin, xMax, yMin, yMax }) {
     this.#id = id;
-    this.#minX = minX;
-    this.#minY = minY;
-    this.#maxX = maxX;
-    this.#maxY = maxY;
-    this.#x = minX;
-    this.#y = minY;
+    this.#xMin = xMin;
+    this.#yMin = yMin;
+    this.#xMax = xMax;
+    this.#yMax = yMax;
+    this.#x = xMin;
+    this.#y = yMin;
   }
 
   get id() {
@@ -32,25 +29,39 @@ export class Point {
   }
 
   set position(percentage) {
-    this.#x = getPercent(percentage, this.#minX, this.#maxX);
-    this.#y = getPercent(percentage, this.#minY, this.#maxY);
+    this.#x = getPercent(percentage, this.#xMin, this.#xMax);
+    this.#y = getPercent(percentage, this.#yMin, this.#yMax);
   }
 
   get position() {
-    return `--translate-x: ${this.#x}; --translate-y: ${this.#y}`;
+    return [this.#x, this.#y];
   }
 }
 
 export class PolygonManager {
   points = [];
+  ref = null;
 
-  constructor(polygon) {
-    // points.forEach((point) => {
-    //   this.points.push({
-    //     point: new Point(point),
-    //     ref: document.querySelector(`#${point.id}`),
-    //   });
-    // });
+  constructor(points, ref) {
+    points.forEach((point) => {
+      this.points.push(new Point(point));
+    });
+    this.ref = ref;
+  }
+
+  updatePositions(percentage) {
+    this.points.forEach((point) => {
+      point.position = percentage;
+    });
+
+    const clipPath = this.points
+      .reduce((acc, point) => {
+        acc.push(`${point.position[0]}% ${point.position[1]}%`);
+        return acc;
+      }, [])
+      .join(",");
+
+    this.ref.style = `clip-path: polygon(${clipPath});`;
   }
 }
 
@@ -64,8 +75,6 @@ export class PointsManager {
         ref: document.querySelector(`#${point.id}`),
       });
     });
-
-    console.log(this.points);
   }
 
   updatePositions(percentage) {
@@ -73,7 +82,8 @@ export class PointsManager {
       item.point.position = percentage;
     });
     this.points.forEach((item) => {
-      item.ref.style = item.point.position;
+      const [x, y] = item.point.position;
+      item.ref.style = `--translate-x: ${x}; --translate-y: ${y}`;
     });
   }
 }

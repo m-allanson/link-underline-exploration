@@ -20,6 +20,10 @@
         container-type: size;
       }
 
+      .controls {
+        margin-block-start: 1rem;
+      }
+
       .polygon {
         --clip-path-min: 0% 0%, 0% 100%, 0 100%, 0 0, 100% 0, 100% 100%, 0 100%,
           0 100%, 100% 100%, 100% 0%;
@@ -29,18 +33,12 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        clip-path: polygon(--clip-path)
+        clip-path: polygon(var(--clip-path));
         background-color: hotpink;
+        transition: clip-path 0.2s;
       }
 
       .point {
-        position: absolute;
-        width: 10px;
-        height: 10px;
-        background-color: red;
-        border-radius: 50%;
-        top: -5px;
-        left: -5px;
         --translate-x-min: 0;
         --translate-x-max: 100;
         --translate-x: var(--translate-x-min);
@@ -48,6 +46,14 @@
         --translate-y-min: 0;
         --translate-y-max: 100;
         --translate-y: var(--translate-y-min);
+
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background-color: red;
+        border-radius: 50%;
+        top: -5px;
+        left: -5px;
 
         transform: translateX(calc(var(--translate-x) * 1cqw))
           translateY(calc(var(--translate-y) * 1cqh));
@@ -67,7 +73,6 @@
         background-color: #f0abfc;
         --translate-x-min: 0;
         --translate-y-min: 100;
-
         --translate-x-max: 0;
         --translate-y-max: 100;
       }
@@ -76,7 +81,6 @@
         background-color: #c4b5fd;
         --translate-x-min: 0;
         --translate-y-min: 100;
-
         --translate-x-max: 100;
         --translate-y-max: 100;
       }
@@ -85,7 +89,6 @@
         background-color: #93c5fd;
         --translate-x-min: 0;
         --translate-y-min: 0;
-
         --translate-x-max: 50;
         --translate-y-max: 0;
       }
@@ -94,7 +97,6 @@
         background-color: #67e8f9;
         --translate-x-min: 100;
         --translate-y-min: 0;
-
         --translate-x-max: 50;
         --translate-y-max: 0;
       }
@@ -103,7 +105,6 @@
         background-color: #6ee7b7;
         --translate-x-min: 100;
         --translate-y-min: 100;
-
         --translate-x-max: 50;
         --translate-y-max: 100;
       }
@@ -112,7 +113,6 @@
         background-color: #bef264;
         --translate-x-min: 0;
         --translate-y-min: 100;
-
         --translate-x-max: 50;
         --translate-y-max: 100;
       }
@@ -121,7 +121,6 @@
         background-color: #fcd34d;
         --translate-x-min: 0;
         --translate-y-min: 100;
-
         --translate-x-max: 0;
         --translate-y-max: 100;
       }
@@ -130,7 +129,6 @@
         background-color: #fca5a5;
         --translate-x-min: 100;
         --translate-y-min: 100;
-
         --translate-x-max: 100;
         --translate-y-max: 100;
       }
@@ -139,7 +137,6 @@
         background-color: #d4d4d4;
         --translate-x-min: 100;
         --translate-y-min: 0;
-
         --translate-x-max: 100;
         --translate-y-max: 0;
       }
@@ -163,7 +160,7 @@
           <span class="point" id="point-9"></span>
           <span class="point" id="point-10"></span>
         </div>
-        <div>
+        <div class="controls">
           <div>
             <label for="transform" class=""> Percentage: </label>
             <span class="label-value">0</span>
@@ -184,21 +181,23 @@
     </main>
     <script type="module" src="index4.js"></script>
     <script type="module">
-      import { PointsManager } from "./index4.js";
+      import { PointsManager, PolygonManager } from "./index4.js";
 
+      /* Initialise the dots */
       const points = [...document.querySelectorAll(".point")].map((point) => {
         let style = window.getComputedStyle(point);
         return {
           id: point.id,
-          minX: Number(style.getPropertyValue("--translate-x-min")),
-          maxX: Number(style.getPropertyValue("--translate-x-max")),
-          minY: Number(style.getPropertyValue("--translate-y-min")),
-          maxY: Number(style.getPropertyValue("--translate-y-max")),
+          xMin: Number(style.getPropertyValue("--translate-x-min")),
+          xMax: Number(style.getPropertyValue("--translate-x-max")),
+          yMin: Number(style.getPropertyValue("--translate-y-min")),
+          yMax: Number(style.getPropertyValue("--translate-y-max")),
         };
       });
 
       const pointsManager = new PointsManager(points);
 
+      /* Now initialise the polygon */
       const polygonEl = document.querySelector(".polygon");
       const polygonStyle = window.getComputedStyle(polygonEl);
       const polygonMinPoints = polygonStyle
@@ -219,11 +218,15 @@
         };
       });
 
+      const polygonManager = new PolygonManager(polygonPoints, polygonEl);
+
+      /* Finally, the controls */
       const input = document.querySelector("input");
       const labelValue = document.querySelector(".label-value");
 
       window.addEventListener("input", (event) => {
         pointsManager.updatePositions(Number(event.target.value));
+        polygonManager.updatePositions(Number(event.target.value));
         labelValue.textContent = event.target.value;
       });
     </script>

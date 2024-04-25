@@ -9,15 +9,14 @@
     <link rel="stylesheet" href="index4.css" />
     <link rel="modulepreload" href="index4.js" />
     <style>
-      :root {
-      }
-
       .canvas {
         width: 100%;
-        aspect-ratio: 2 / 1;
+        aspect-ratio: 6 / 1;
         position: relative;
         border: 1px solid hotpink;
         container-type: size;
+        display: flex;
+        min-height: 20px;
       }
 
       .controls {
@@ -35,7 +34,6 @@
         height: 100%;
         clip-path: polygon(var(--clip-path));
         background-color: hotpink;
-        transition: clip-path 0.2s;
       }
 
       .point {
@@ -57,7 +55,6 @@
 
         transform: translateX(calc(var(--translate-x) * 1cqw))
           translateY(calc(var(--translate-y) * 1cqh));
-        transition: transform 0.2s;
       }
 
       #point-1 {
@@ -170,7 +167,7 @@
               id="transform"
               max="100"
               min="0"
-              step="1"
+              step="0.1"
               type="range"
               value="0"
               style=""
@@ -181,7 +178,7 @@
     </main>
     <script type="module" src="index4.js"></script>
     <script type="module">
-      import { PointsManager, PolygonManager } from "./index4.js";
+      import { PointHandler, PolygonHandler } from "./index4.js";
 
       /* Initialise the dots */
       const points = [...document.querySelectorAll(".point")].map((point) => {
@@ -195,7 +192,7 @@
         };
       });
 
-      const pointsManager = new PointsManager(points);
+      const pointHandler = new PointHandler(points);
 
       /* Now initialise the polygon */
       const polygonEl = document.querySelector(".polygon");
@@ -206,6 +203,7 @@
       const polygonMaxPoints = polygonStyle
         .getPropertyValue("--clip-path-max")
         .split(",");
+
       const polygonPoints = polygonMinPoints.map((point, index) => {
         const [xMin, yMin] = point.trim().split(" ");
         const [xMax, yMax] = polygonMaxPoints[index].trim().split(" ");
@@ -218,16 +216,20 @@
         };
       });
 
-      const polygonManager = new PolygonManager(polygonPoints, polygonEl);
+      const polygonHandler = new PolygonHandler(polygonPoints, polygonEl);
 
       /* Finally, the controls */
       const input = document.querySelector("input");
       const labelValue = document.querySelector(".label-value");
 
+      const update = (event) => {
+        pointHandler.updatePositions(event.target.value);
+        polygonHandler.updatePositions(event.target.value);
+        labelValue.textContent = Number.parseInt(event.target.value, 10);
+      };
+
       window.addEventListener("input", (event) => {
-        pointsManager.updatePositions(Number(event.target.value));
-        polygonManager.updatePositions(Number(event.target.value));
-        labelValue.textContent = event.target.value;
+        window.requestAnimationFrame(() => update(event));
       });
     </script>
   </body>

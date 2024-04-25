@@ -38,7 +38,7 @@ export class Point {
   }
 }
 
-export class PolygonManager {
+export class PolygonHandler {
   points = [];
   ref = null;
 
@@ -65,7 +65,7 @@ export class PolygonManager {
   }
 }
 
-export class PointsManager {
+export class PointHandler {
   points = [];
 
   constructor(points) {

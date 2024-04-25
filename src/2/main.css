@@ -1,7 +1,6 @@
 /**
-      General page setup styles
-      ====================================================
-      */
+General page setup styles
+*/
 
 * {
   box-sizing: border-box;
@@ -56,4 +55,37 @@ article {
     flex-wrap: wrap;
     gap: 0.25rem 1rem;
   }
+}
+
+/**
+ No way to specify the track colour for the input. Safari defaults to a dark 
+ grey, which is nearly invisible on the dark blue background.
+
+ Need to use fully custom styles to work around that.
+
+ Thanks to: https://stackoverflow.com/a/68907798
+*/
+
+input[type="range"]::-webkit-slider-runnable-track,
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 3px;
+  background: linear-gradient(to right, #293043, #293043), #d7d7d7;
+  background-size: var(--background-size, 0%) 100%;
+  background-repeat: no-repeat;
+  border-radius: 5px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  background: white;
+  border: solid black 1px;
+  border-radius: 50%;
+  margin-top: -6px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
 }
